@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ../../backend/backend
+      dockerfile: Dockerfile
+    image: devops-backend:2.0
+    container_name: devops-backend
+    volumes:
+      - backend-data:/app/data
+    networks:
+      - devops-net
+    restart: always
+
+  frontend:
+    build:
+      context: ../../frontend/frontend
+      dockerfile: Dockerfile
+    image: devops-frontend:2.0
+    container_name: devops-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - devops-net
+    restart: always
+
+volumes:
+  backend-data:
+
+networks:
+  devops-net:
+    driver: bridge
