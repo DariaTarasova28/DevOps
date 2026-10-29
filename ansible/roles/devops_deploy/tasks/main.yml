@@ -1,0 +1,65 @@
+
+# БЛОК 1: УСТАНОВКА DOCKER (тег install)
+
+- name: Install required system packages
+  apt:
+    name: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - git
+      - python3-pip
+    state: present
+    update_cache: yes
+  tags: [install, deploy]
+
+- name: Install Docker and Docker Compose plugin
+  shell: |
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sh get-docker.sh
+    apt-get install -y docker-compose-plugin
+  args:
+    creates: /usr/bin/docker
+  tags: [install, deploy]
+
+- name: Ensure Docker service is started
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+  tags: [install, deploy]
+
+# БЛОК 2: КЛОНИРОВАНИЕ РЕПОЗИТОРИЕВ 
+
+- name: Create base directory for projects
+  file:
+    path: /opt/devops
+    state: directory
+    mode: '0755'
+  tags: [deploy]
+
+- name: Clone repositories
+  git:
+    repo: "{{ item.repo }}"
+    dest: "/opt/devops/{{ item.name }}"
+    version: main
+    force: yes
+  loop:
+    - { repo: "https://github.com/DariaTarasova28/backend.git", name: "backend/backend" }
+    - { repo: "https://github.com/DariaTarasova28/frontend.git", name: "frontend/frontend" }
+    - { repo: "https://github.com/DariaTarasova28/DevOps.git", name: "DevOps/DevOps" }
+  tags: [deploy]
+
+# БЛОК 3: УПРАВЛЕНИЕ КОНТЕЙНЕРАМИ (теги start и stop)
+- name: Start services via Docker Compose
+  shell: |
+    cd /opt/devops/DevOps/DevOps
+    docker compose up -d --build
+  tags: [start]
+
+- name: Stop services via Docker Compose
+  shell: |
+    cd /opt/devops/DevOps/DevOps
+    docker compose down
+  tags: [stop]

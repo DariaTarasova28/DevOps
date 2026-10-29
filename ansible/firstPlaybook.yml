@@ -1,0 +1,6 @@
+---
+- name: Deploy DevOps Microservices
+  hosts: devops_nodes
+  become: true
+  roles:
+    - devops_deploy
