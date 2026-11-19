@@ -8,29 +8,33 @@
     stages {
         stage('Подготовка окружения') {
             steps {
-                echo '=== Stage 1: install Docker/Compose + clone repos ==='
-                ansiblePlaybook(
-                    playbook:      'ansible/firstPlaybook.yml',
-                    inventory:     'ansible/inventory',
-                    credentialsId: 'ssh-ansible-credentials',
-                    tags:          'install,deploy',
-                    colorized:     true,
-                    become:        true
-                )
+                script {
+                    echo '=== Stage 1: install Docker/Compose + clone repos ==='
+                    ansiblePlaybook(
+                        playbook:      'ansible/firstPlaybook.yml',
+                        inventory:     'ansible/inventory',
+                        credentialsId: 'ssh-ansible-credentials',
+                        tags:          'install,deploy',
+                        colorized:     true,
+                        become:        true
+                    )
+                }
             }
         }
 
         stage('Запуск приложений') {
             steps {
-                echo '=== Stage 2: docker compose up ==='
-                ansiblePlaybook(
-                    playbook:      'ansible/firstPlaybook.yml',
-                    inventory:     'ansible/inventory',
-                    credentialsId: 'ssh-ansible-credentials',
-                    tags:          'start',
-                    colorized:     true,
-                    become:        true
-                )
+                script {
+                    echo '=== Stage 2: docker compose up ==='
+                    ansiblePlaybook(
+                        playbook:      'ansible/firstPlaybook.yml',
+                        inventory:     'ansible/inventory',
+                        credentialsId: 'ssh-ansible-credentials',
+                        tags:          'start',
+                        colorized:     true,
+                        become:        true
+                    )
+                }
             }
         }
     }
