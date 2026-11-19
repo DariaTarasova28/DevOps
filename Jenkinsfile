@@ -1,4 +1,4 @@
-﻿node {
+node {
     stage('Подготовка окружения') {
         echo '=== Stage 1: Установка Docker/Compose и клонирование репозиториев ==='
         withCredentials([sshUserPrivateKey(credentialsId: 'ssh-ansible-credentials', keyFileVariable: 'SSH_KEY')]) {
